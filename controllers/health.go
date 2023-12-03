@@ -2,16 +2,20 @@ package controllers
 
 import (
 	"net/http"
+	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 )
 
 type HealthController struct{}
 
-func (*HealthController) Status(c *gin.Context) {
-	c.String(http.StatusOK, "Working!")
+func (rs HealthController) Routes() chi.Router {
+	r := chi.NewRouter()
+	r.Get("/", rs.GetHealth)
+	return r
 }
 
-func (*HealthController) Status2(c *gin.Context) {
-	c.String(http.StatusOK, "V1 Working!")
+func (*HealthController) GetHealth(w http.ResponseWriter, r *http.Request) {
+	hostname, _ := os.Hostname()
+	w.Write([]byte("Hostname: " + hostname + "is healthy"))
 }
