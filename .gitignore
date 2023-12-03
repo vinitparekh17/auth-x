@@ -1,6 +1,5 @@
 .env
 postgres-data
-# Ignore the test of db and .env
 
 tests/database_test.go
 tests/env_test.go
