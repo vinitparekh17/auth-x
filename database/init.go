@@ -18,5 +18,13 @@ func Init() *sql.DB {
 	err = db.Ping()
 	utility.ErrorHandler(err)
 	slog.Info("Database pinged successfully")
+	CreateDb(db)
+
 	return db
+}
+
+func CreateDb(db *sql.DB) {
+	_, err := db.Exec("CREATE DATABASE IF NOT EXISTS Project-x")
+	utility.ErrorHandler(err)
+	slog.Info("Database created successfully")
 }
