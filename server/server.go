@@ -18,6 +18,5 @@ func Init() {
 	// logger.Info("this is working fine")
 	db := database.Init()
 	defer db.Close()
-	router.Mount("/user", UserController{}.Routes())
 	http.ListenAndServe(":3000", router)
 }

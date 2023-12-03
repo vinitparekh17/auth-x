@@ -5,17 +5,9 @@ import (
 	"github.com/vinitparekh17/project-x/controllers"
 )
 
-type UserController struct {
-	*controllers.UserControllers
-}
-
 func NewRouter() chi.Router {
 	r := chi.NewRouter()
+	r.Mount("/health", controllers.HealthController{}.Routes())
+	r.Mount("/user", controllers.UserControllers{}.Routes())
 	return r
-}
-
-func (r UserController) Routes() chi.Router {
-	router := NewRouter()
-	router.Get("/", r.GetUser)
-	return router
 }
