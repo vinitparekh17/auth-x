@@ -2,17 +2,17 @@ package config
 
 import (
 	"errors"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/vinitparekh17/project-x/utility"
 )
 
 func Init() {
 	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	utility.ErrorHandler(err)
+	slog.Info("Config loaded successfully")
 }
 
 func GetConfig(env string) (string, error) {

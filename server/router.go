@@ -1,23 +1,21 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/vinitparekh17/project-x/controllers"
 )
 
-func NewRouter() *gin.Engine {
-	router := gin.Default()
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
+type UserController struct {
+	*controllers.UserControllers
+}
 
-	health := new(controllers.HealthController)
+func NewRouter() chi.Router {
+	r := chi.NewRouter()
+	return r
+}
 
-	router.GET("/health", health.Status)
-	// router.Use(middlewares.AuthMiddleware())
-	v1 := router.Group("v1")
-	{
-		v1.GET("/health", health.Status2)
-	}
+func (r UserController) Routes() chi.Router {
+	router := NewRouter()
+	router.Get("/", r.GetUser)
 	return router
-
 }
