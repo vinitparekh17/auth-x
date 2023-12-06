@@ -9,18 +9,20 @@ import (
 	"github.com/vinitparekh17/project-x/utility"
 )
 
-func Init() *sql.DB {
+func Connect() *sql.DB {
 	connStr, err := config.GetConfig("POSTGRES_URL")
 	utility.ErrorHandler(err)
 	db, err := sql.Open("postgres", connStr)
 	utility.ErrorHandler(err)
 	slog.Info("Database connected successfully")
-	err = db.Ping()
-	utility.ErrorHandler(err)
-	slog.Info("Database pinged successfully")
 	CreateDb(db)
-
 	return db
+}
+
+func Disconnect(db *sql.DB) {
+	err := db.Close()
+	utility.ErrorHandler(err)
+	slog.Info("Database closed successfully")
 }
 
 func CreateDb(db *sql.DB) {
