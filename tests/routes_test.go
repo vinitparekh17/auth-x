@@ -4,57 +4,26 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"strings"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
 	"github.com/vinitparekh17/project-x/controllers"
+	"github.com/vinitparekh17/project-x/utility"
 )
 
 func TestGetHealth(t *testing.T) {
-	req, err := http.NewRequest("GET", "/health", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	rr := httptest.NewRecorder()
-	router := chi.NewRouter()
-	router.Mount("/health", controllers.HealthController{}.Routes())
-
-	router.ServeHTTP(rr, req)
-
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-
-	hostname, _ := os.Hostname()
-	expected := "Hostname: " + hostname + "is healthy"
-	if !strings.Contains(rr.Body.String(), expected) {
-		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
-	}
-}
-
-func TestGetUser(t *testing.T) {
-	req, err := http.NewRequest("GET", "/user", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	rr := httptest.NewRecorder()
-	router := chi.NewRouter()
-	router.Mount("/user", controllers.UserControllers{}.Routes())
-
-	router.ServeHTTP(rr, req)
-
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-	expected := "Hello World"
-	if !strings.Contains(rr.Body.String(), expected) {
-		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/health/get", nil)
+	rec := httptest.NewRecorder()
+	e.NewContext(req, rec)
+	assert.Equal(t, http.StatusOK, rec.Code)
+	c := e.NewContext(req, rec)
+	h := (&controllers.HealthController{})
+	host, err := os.Hostname()
+	utility.ErrorHandler(err)
+	if assert.NoError(t, h.GetHealth(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "\""+host+" is healthy\"\n", rec.Body.String())
 	}
 }

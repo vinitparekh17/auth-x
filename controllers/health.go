@@ -4,18 +4,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/labstack/echo/v4"
+	"github.com/vinitparekh17/project-x/utility"
 )
 
 type HealthController struct{}
 
-func (rs HealthController) Routes() chi.Router {
-	r := chi.NewRouter()
-	r.Get("/", rs.GetHealth)
-	return r
-}
-
-func (*HealthController) GetHealth(w http.ResponseWriter, r *http.Request) {
-	hostname, _ := os.Hostname()
-	w.Write([]byte("Hostname: " + hostname + "is healthy"))
+func (*HealthController) GetHealth(c echo.Context) error {
+	hostname, err := os.Hostname()
+	utility.ErrorHandler(err)
+	return c.JSON(http.StatusOK, hostname+" is healthy")
 }
