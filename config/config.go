@@ -6,13 +6,25 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/v2"
 	"github.com/vinitparekh17/project-x/utility"
 )
 
-func Init() {
+var K *koanf.Koanf
+
+func LoadConfig() {
+	K = koanf.New(".")
+	err := K.Load(file.Provider("config.yml"), yaml.Parser())
+	utility.ErrorHandler(err)
+	slog.Info("Config. loaded successfully")
+}
+
+func LoadEnv() {
 	err := godotenv.Load()
 	utility.ErrorHandler(err)
-	slog.Info("Config loaded successfully")
+	slog.Info("Env. loaded successfully")
 }
 
 func GetConfig(env string) (string, error) {
