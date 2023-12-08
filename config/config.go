@@ -12,17 +12,19 @@ import (
 	"github.com/vinitparekh17/project-x/utility"
 )
 
-var k = koanf.New(".")
+var K *koanf.Koanf
 
 func LoadConfig() {
-	err := k.Load(file.Provider("config.yml"), yaml.Parser())
+	K = koanf.New(".")
+	err := K.Load(file.Provider("config.yml"), yaml.Parser())
 	utility.ErrorHandler(err)
+	slog.Info("Config. loaded successfully")
 }
 
 func LoadEnv() {
 	err := godotenv.Load()
 	utility.ErrorHandler(err)
-	slog.Info("Config loaded successfully")
+	slog.Info("Env. loaded successfully")
 }
 
 func GetConfig(env string) (string, error) {

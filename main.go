@@ -12,9 +12,12 @@ func main() {
 	server := echo.New()
 	// ---------------------------------------- //
 
-	// -------------- Init Config -------------- //
+	// -------------- Load Env -------------- //
 	config.LoadEnv()
 	// ---------------------------------------- //
+
+	// -------------- Load Config -------------- //
+	config.LoadConfig()
 
 	// -------------- Init Middlewares -------------- //
 	middlewares.Init(server)
@@ -25,6 +28,6 @@ func main() {
 	// ---------------------------------------- //
 
 	// -------------- Start Server -------------- //
-	server.Logger.Fatal(server.Start(":8000"))
+	server.Logger.Fatal(server.Start(config.K.String("port")))
 	// ---------------------------------------- //
 }
