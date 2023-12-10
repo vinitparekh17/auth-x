@@ -4,7 +4,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/vinitparekh17/project-x/apis"
 	"github.com/vinitparekh17/project-x/config"
-	"github.com/vinitparekh17/project-x/database"
 	"github.com/vinitparekh17/project-x/middlewares"
 )
 
@@ -19,11 +18,6 @@ func main() {
 
 	// -------------- Load Config -------------- //
 	config.LoadConfig()
-	// ---------------------------------------- //
-
-	// -------------- Init Database -------------- //
-	database.Init()
-	// ---------------------------------------- //
 
 	// -------------- Init Middlewares -------------- //
 	middlewares.Init(server)
