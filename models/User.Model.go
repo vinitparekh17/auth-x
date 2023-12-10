@@ -1,6 +1,7 @@
 package models
 
-// Creating user model which suits postgres database
+// Identity struct that describes how our Identity table looks like
+
 type UserModel struct {
 	ID        int64  `json:"id,omitempty" unique:"true"`
 	Name      string `json:"name"`

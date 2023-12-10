@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/vinitparekh17/project-x/database"
 	"github.com/vinitparekh17/project-x/models"
 	"github.com/vinitparekh17/project-x/utility"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserControllers struct{}
@@ -23,5 +25,16 @@ func (*UserControllers) Signup(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "Email and Password are required")
 	}
 
-	return c.JSON(http.StatusBadRequest, "Email and Password are required")
+	db := database.Connect()
+	defer database.Disconnect(db)
+
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	utility.ErrorHandler(err)
+
+	user.Password = string(hashedPass)
+	errr := user.Create(*user)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, errr)
+	}
+	return c.JSON(http.StatusOK, user)
 }

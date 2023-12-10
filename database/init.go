@@ -5,10 +5,13 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+
 	_ "github.com/lib/pq"
 	"github.com/vinitparekh17/project-x/config"
 	"github.com/vinitparekh17/project-x/utility"
 )
+
+type db struct{}
 
 func Init() {
 	path := filepath.Join("database", "user.sql")

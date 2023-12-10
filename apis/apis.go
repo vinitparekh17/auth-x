@@ -7,7 +7,7 @@ import (
 
 func Init(e *echo.Echo) {
 	user := e.Group("/user")
-	user.GET("/get", (&controllers.UserControllers{}).GetUsers)
+	user.POST("/signup", (&controllers.UserControllers{}).Signup)
 
 	health := e.Group("/health")
 	health.GET("/get", (&controllers.HealthController{}).GetHealth)
