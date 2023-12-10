@@ -21,11 +21,14 @@ func (*IdentityModel) Create(usr IdentityModel) error {
 	db := database.Connect()
 	defer database.Disconnect(db)
 	query := database.Insert{
-		Table:  "identity",
+		Table:  `"user".identity`,
 		Fields: []string{"email", "password"},
-		Values: []interface{}{usr.Email, usr.Password},
 	}
-	_, err := db.Exec(query.Build(), query.Values...)
+
+	smt, err := db.Prepare(query.Build())
 	utility.ErrorHandler(err)
-	return err
+	defer smt.Close()
+	_, er := smt.Exec(usr.Email, usr.Password)
+	utility.ErrorHandler(er)
+	return nil
 }

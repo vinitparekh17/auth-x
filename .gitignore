@@ -4,3 +4,5 @@ postgres-data
 tests/database_test.go
 tests/env_test.go
 logs
+docker-compose.yaml
+postgres_data

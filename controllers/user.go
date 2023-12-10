@@ -38,3 +38,13 @@ func (*UserControllers) Signup(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, user)
 }
+
+func (*UserControllers) Login(c echo.Context) error {
+	user := &models.UserModel{}
+	db := database.Connect()
+	defer database.Disconnect(db)
+	err := c.Bind(&user)
+	utility.ErrorHandler(err)
+	// To be continued...
+	return nil
+}

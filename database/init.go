@@ -23,7 +23,6 @@ func Init() {
 	_, execerr := pg.Exec(queries)
 	utility.ErrorHandler(execerr)
 }
-
 func Connect() *sql.DB {
 	connStr, err := config.GetConfig("POSTGRES_URL")
 	utility.ErrorHandler(err)

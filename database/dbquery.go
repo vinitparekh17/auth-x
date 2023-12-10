@@ -15,13 +15,11 @@ import (
 type Insert struct {
 	Table  string
 	Fields []string
-	Values []interface{}
 }
 
 type Update struct {
 	Table  string
 	Fields []string
-	Values []interface{}
 	Where  string
 }
 
@@ -30,27 +28,30 @@ type Delete struct {
 	Where string
 }
 
-type Select struct {
-	Table  string
-	Fields []string
-	Where  string
-}
-
 type All struct {
 	Table string
 }
 
 func (i *Insert) Build() string {
 	placeholders := make([]string, len(i.Fields))
-	values := make([]interface{}, len(i.Fields))
-	for idx, _ := range i.Fields {
+	for idx := range i.Fields {
 		placeholders[idx] = "$" + fmt.Sprintf("%d", idx+1)
-		values[idx] = i.Values[idx]
 	}
-	return `INSERT INTO ` + i.Table + ` (` + strings.Join(i.Fields, ",") + `) VALUES (` + strings.Join(placeholders, ",") + `)`
+	return `INSERT INTO ` + i.Table + ` (` + strings.Join(i.Fields, ", ") + `) VALUES (` + strings.Join(placeholders, ", ") + `)`
 }
 
 func (u *Update) Build() string {
-	// query := `UPDATE ` + u.Table + ` SET ` + strings.Join(u.Fields, ",") + `=` + strings.Join(u.Values, ",") + ` WHERE ` + u.Where
-	return "query"
+	placeholders := make([]string, len(u.Fields))
+	for idx := range u.Fields {
+		placeholders[idx] = "$" + fmt.Sprintf("%d", idx+1)
+	}
+	return `UPDATE ` + u.Table + ` SET ` + strings.Join(u.Fields, ",") + `=` + strings.Join(placeholders, ", ") + ` WHERE ID=` + `$` + fmt.Sprintf("%d", len(u.Fields)+1)
+}
+
+func (d *Delete) Build() string {
+	return `DELETE FROM ` + d.Table + `WHERE ID = $1`
+}
+
+func (a *All) Build() string {
+	return `SELECT * FROM ` + a.Table
 }
