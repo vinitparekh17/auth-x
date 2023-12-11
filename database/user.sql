@@ -1,33 +1,30 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- Table: users
+CREATE DATABASE IF NOT EXISTS "auth";
+
+USE "auth";
 
 CREATE SCHEMA IF NOT EXISTS "user";
 
-CREATE TABLE IF NOT EXISTS "user"."identity" (
-    ID UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS "user.identity" (
+    UID UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL CHECK (email <> ''),
     password VARCHAR(255) NOT NULL CHECK (password <> ''),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
+)
 
-CREATE TABLE IF NOT EXISTS "user"."tokens" (
-    ID SERIAL PRIMARY KEY,
-    forgot_token VARCHAR(255) NOT NULL CHECK (forgot_token <> ''),
+CREATE TABLE IF NOT EXISTS "user.tokens" (
+    UUID UUID PRIMARY KEY REFERENCES "user.identity"(UID) CASCADE ON DELETE CASCADE,
+    forgot_token VARCHAR(255) NOT NULL CHECK (token <> ''),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    auth_id UUID,
-    FOREIGN KEY (auth_id) REFERENCES "user"."identity"(ID) ON DELETE CASCADE
-);
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
+)
 
-CREATE TABLE IF NOT EXISTS "user"."profile" (
-    ID SERIAL PRIMARY KEY,
-    first_name VARCHAR(255) NOT NULL CHECK (first_name <> ''),
-    last_name VARCHAR(255) NOT NULL CHECK (last_name <> ''),
+CREATE TABLE IF NOT EXISTS "user.profile" (
+    UID UUID PRIMARY KEY REFERENCES "user.identity"(UID) CASCADE ON DELETE CASCADE,
+    user_name VARCHAR(255) NOT NULL CHECK (first_name <> ''),
     mobile VARCHAR(255) NOT NULL CHECK (mobile <> ''),
-    admin_id UUID,
+    admin_id UUID REFERENCES "user.identity"(UID) ON DELETE SET NULL DEFAULT NULL CHECK (admin_id <> ''),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    auth_id UUID,
-    FOREIGN KEY (auth_id) REFERENCES "user"."identity"(ID) ON DELETE CASCADE,
-    FOREIGN KEY (admin_id) REFERENCES "user"."identity"(ID) ON DELETE SET NULL
-);
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
+)

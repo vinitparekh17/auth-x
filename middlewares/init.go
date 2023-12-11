@@ -35,5 +35,5 @@ func Init(e *echo.Echo) {
 
 	e.Use(middleware.RequestID())
 
-	// e.Use(middleware.Recover())
+	e.Use(middleware.Recover())
 }
