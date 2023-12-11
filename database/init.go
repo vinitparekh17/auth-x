@@ -8,32 +8,30 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/vinitparekh17/project-x/config"
-	"github.com/vinitparekh17/project-x/utility"
+	"github.com/vinitparekh17/project-x/handler"
 )
-
-type db struct{}
 
 func Init() {
 	path := filepath.Join("database", "user.sql")
 	reader, err := os.ReadFile(path)
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	queries := string(reader)
 	pg := Connect()
 	defer Disconnect(pg)
 	_, execerr := pg.Exec(queries)
-	utility.ErrorHandler(execerr)
+	handler.ErrorHandler(execerr)
 }
 func Connect() *sql.DB {
 	connStr, err := config.GetConfig("POSTGRES_URL")
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	pg, err := sql.Open("postgres", connStr)
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	slog.Info("Database connected successfully")
 	return pg
 }
 
 func Disconnect(db *sql.DB) {
 	err := db.Close()
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	slog.Info("Database closed successfully")
 }

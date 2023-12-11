@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/vinitparekh17/project-x/database"
-	"github.com/vinitparekh17/project-x/utility"
+	"github.com/vinitparekh17/project-x/handler"
 )
 
 /*
@@ -26,9 +26,9 @@ func (*IdentityModel) Create(usr IdentityModel) error {
 	}
 
 	smt, err := db.Prepare(query.Build())
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	defer smt.Close()
 	_, er := smt.Exec(usr.Email, usr.Password)
-	utility.ErrorHandler(er)
+	handler.ErrorHandler(er)
 	return nil
 }

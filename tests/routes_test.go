@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinitparekh17/project-x/controllers"
-	"github.com/vinitparekh17/project-x/utility"
+	"github.com/vinitparekh17/project-x/handler"
 )
 
 func TestGetHealth(t *testing.T) {
@@ -21,7 +21,7 @@ func TestGetHealth(t *testing.T) {
 	c := e.NewContext(req, rec)
 	h := (&controllers.HealthController{})
 	host, err := os.Hostname()
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	if assert.NoError(t, h.GetHealth(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 		assert.Equal(t, "\""+host+" is healthy\"\n", rec.Body.String())

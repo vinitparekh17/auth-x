@@ -6,13 +6,13 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/vinitparekh17/project-x/config"
-	"github.com/vinitparekh17/project-x/utility"
+	"github.com/vinitparekh17/project-x/handler"
 )
 
 func Init(e *echo.Echo) {
 	pwd, _ := os.Getwd()
 	file, err := os.OpenFile(pwd+config.K.String("log_path"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	defer file.Close()
 
 	e.Use(middleware.BodyLimit("2M"))

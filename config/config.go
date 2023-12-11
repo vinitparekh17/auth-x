@@ -9,7 +9,7 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
-	"github.com/vinitparekh17/project-x/utility"
+	"github.com/vinitparekh17/project-x/handler"
 )
 
 var K *koanf.Koanf
@@ -17,13 +17,13 @@ var K *koanf.Koanf
 func LoadConfig() {
 	K = koanf.New(".")
 	err := K.Load(file.Provider("config.yml"), yaml.Parser())
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	slog.Info("Config. loaded successfully")
 }
 
 func LoadEnv() {
 	err := godotenv.Load()
-	utility.ErrorHandler(err)
+	handler.ErrorHandler(err)
 	slog.Info("Env. loaded successfully")
 }
 

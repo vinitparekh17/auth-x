@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/vinitparekh17/project-x/utility"
+	"github.com/vinitparekh17/project-x/handler"
 )
 
 /*
@@ -14,22 +14,19 @@ import (
 	To prevent code duplication
 */
 
-
-
-func (*db) ModifyData(query string, args ...interface{}) (bool, error) {
+func ModifyData(query string, args ...interface{}) (bool, error) {
 	if strings.HasPrefix(query, "INSERT") || strings.HasPrefix(query, "UPDATE") || strings.HasPrefix(query, "DELETE") {
 		db := Connect()
 		defer Disconnect(db)
 		res, err := db.Exec(query, args...)
-		utility.ErrorHandler(err)
+		handler.ErrorHandler(err)
 		return res != nil, err
 	}
 	return false, errors.New("query must starts with insert, update or delete")
 }
 
-func (*db) RetriveData(query string, args ...interface{}) *sql.Row {
-	db := Connect()
-	defer Disconnect(db)
-	row := db.QueryRow(query, args...)
+func RetriveData(db *sql.DB, query string, args ...interface{}) *sql.Rows {
+	row, err := db.Query(query, args...)
+	handler.ErrorHandler(err)
 	return row
 }
