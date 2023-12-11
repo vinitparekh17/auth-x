@@ -5,6 +5,11 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/vinitparekh17/project-x/database"
+	"github.com/vinitparekh17/project-x/handler"
+	"github.com/vinitparekh17/project-x/models"
+	"github.com/vinitparekh17/project-x/utilities"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserControllers struct{}
@@ -12,7 +17,6 @@ type UserControllers struct{}
 func (*UserControllers) GetUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, "Hello, World!")
 }
-<<<<<<< HEAD
 
 func (*UserControllers) Signup(c echo.Context) error {
 	user := &models.IdentityModel{}
@@ -76,5 +80,3 @@ func (*UserControllers) Login(c echo.Context) error {
 	}
 	return c.JSON(http.StatusNotFound, utilities.ErrorResponse("User with this email does not exists", errors.New(utilities.LoginFailed)))
 }
-=======
->>>>>>> f141da8 (Revert "Development")
