@@ -1,4 +1,4 @@
-name: Go
+name: Go CI/CD
 
 on:
   push:
@@ -7,41 +7,73 @@ on:
     branches: [ "main" ]
 
 env:
-  GAR_REPO : ${{ secrets.GAR_REPO }}
-  IMAGE_NAME : ${{ secrets.IMAGE_NAME }}
-  TAG : ${{ github.sha }}
+  GAR_REPO: ${{ secrets.GAR_REPO }}
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
 
 jobs:
-
-  build:
+  # Test job
+  test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21.5'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.5'
 
-    - name: Test
-      run: go test -v ./tests
-    
-    - id: auth
-      name: Authenticate with gcloud
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('go.mod') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-    
-    - name: check gcloud cli
-      run: "gcloud info"
+      - name: Test
+        run: go test -v ./tests
 
-    - name: Build and push
-      env:
-        GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      run: |
-        gcloud auth configure-docker asia-south1-docker.pkg.dev
-        docker build -t ${{ env.GAR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} .
-        docker push ${{ env.GAR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+  # Build and deploy job
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.5'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('go.mod') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+
+      - name: Build image
+        env:
+          GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          TAG: ${{ github.sha }}-build
+        run: |
+          gcloud auth configure-docker asia-south1-docker.pkg.dev
+          docker build -t ${{ env.GAR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} .
+
+      - name: Test built image (optional)
+        # Add your local testing commands here
+
+      - name: Deploy image
+        if: steps.test_built_image.outputs.success
+        env:
+          GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          TAG: ${{ github.sha }}
+        run: |
+          gcloud auth configure-docker asia-south1-docker.pkg.dev
+          docker push ${{ env.GAR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+
