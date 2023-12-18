@@ -2,6 +2,7 @@ openapi: 3.0.0
 info:
   title: Auth Service
   version: 1.0.0
+  description: Auth Service is a microservice for authentication and authorization
 paths:
   /health/get:
     get:
@@ -12,3 +13,88 @@ paths:
   /user/login:
     post:
       summary: Login user and return JWT token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginUnauthorizedResponse'
+  /user/signup:
+    post:
+      summary: Signup user if not exists and return JWT token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccessResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginUnauthorizedResponse'
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        token:
+          type: string
+    LoginUnauthorizedResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+        error:
+          type: string
+          enum:
+            - Login process has failed
+    SignupRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    SignupSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        token:
+          type: string

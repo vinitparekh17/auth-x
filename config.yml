@@ -1,4 +1,5 @@
 port: :8000
 origin:
   - http://localhost:8000
-log_path: /logs/main.log
+api_logs: /logs/api.log
+err_logs: /logs/error.log
