@@ -28,11 +28,7 @@ func (*UserControllers) Signup(c echo.Context) error {
 	defer database.Disconnect(db)
 
 	var existEmail string
-	row := database.RetriveData(db, "SELECT email FROM \"user\".identity WHERE email = $1", user.Email)
-	for row.Next() {
-		err := row.Scan(&existEmail)
-		handler.ErrorHandler(err)
-	}
+	database.RetriveData(db, "SELECT email FROM \"user\".identity WHERE email = $1", user.Email).Scan(&existEmail)
 	if user.Email != existEmail {
 		if user.Email == "" || user.Password == "" {
 			return c.JSON(http.StatusBadRequest, "Email and Password are required")
@@ -66,11 +62,7 @@ func (*UserControllers) Login(c echo.Context) error {
 		Password string
 	}
 	var eu = &existUser{}
-	row := database.RetriveData(db, "SELECT email, password FROM \"user\".identity WHERE email = $1", user.Email)
-	for row.Next() {
-		err := row.Scan(&eu.Email, &eu.Password)
-		handler.ErrorHandler(err)
-	}
+	database.RetriveData(db, "SELECT email, password FROM \"user\".identity WHERE email = $1", user.Email).Scan(&eu.Email, &eu.Password)
 	if user.Email == eu.Email {
 		err := bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(user.Password))
 		if err == nil {
@@ -78,5 +70,5 @@ func (*UserControllers) Login(c echo.Context) error {
 		}
 		return c.JSON(http.StatusUnauthorized, utilities.ErrorResponse("Password has been incorrect", errors.New(utilities.LoginFailed)))
 	}
-	return c.JSON(http.StatusNotFound, utilities.ErrorResponse("User with this email does not exists", errors.New(utilities.LoginFailed)))
+	return c.JSON(http.StatusUnauthorized, utilities.ErrorResponse("User with this email does not exists", errors.New(utilities.LoginFailed)))
 }
