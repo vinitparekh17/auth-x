@@ -1,0 +1,14 @@
+openapi: 3.0.0
+info:
+  title: Auth Service
+  version: 1.0.0
+paths:
+  /health/get:
+    get:
+      summary: Get health status
+      responses:
+        '200':
+          description: OK
+  /user/login:
+    post:
+      summary: Login user and return JWT token
