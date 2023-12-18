@@ -25,7 +25,7 @@ func createLogFile(logPath string) *os.File {
 
 func InitApiLogs() *slog.Logger {
 	pwd, _ := os.Getwd()
-	logPath := pwd + config.K.String("api_log")
+	logPath := pwd + config.K.String("api_logs")
 
 	// Create the log file if it doesn't exist
 	if _, err := os.Stat(logPath); os.IsNotExist(err) {
@@ -33,12 +33,14 @@ func InitApiLogs() *slog.Logger {
 		defer f.Close()
 		return slog.New(slog.NewJSONHandler(f, nil))
 	}
-	return slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	handler.ErrorHandler(err)
+	return slog.New(slog.NewJSONHandler(f, nil))
 }
 
 func InitErrLogs() *os.File {
 	pwd, _ := os.Getwd()
-	logPath := pwd + config.K.String("err_log")
+	logPath := pwd + config.K.String("err_logs")
 
 	// Create the log file if it doesn't exist
 	if _, err := os.Stat(logPath); os.IsNotExist(err) {

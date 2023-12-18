@@ -42,20 +42,14 @@ paths:
             schema:
               $ref: '#/components/schemas/SignupRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SignupSuccessResponse'
         '400':
           description: Bad Request
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginUnauthorizedResponse'
 
 components:
   schemas:
