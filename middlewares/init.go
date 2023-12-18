@@ -37,6 +37,7 @@ func Init(e *echo.Echo) {
 	e.Use(middleware.RequestID())
 
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",`,
 		Output: utilities.InitErrLogs(),
 	}))
 
