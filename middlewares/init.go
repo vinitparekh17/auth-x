@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"os"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -30,6 +31,9 @@ func Init(e *echo.Echo) {
 	e.Use(middleware.Secure())
 
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		Skipper: func(c echo.Context) bool {
+			return strings.Contains(c.Request().URL.Path, "swagger")
+		},
 		Level: 5,
 	}))
 
