@@ -1,21 +1,18 @@
 package middlewares
 
 import (
+	"context"
+	"log/slog"
 	"os"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/vinitparekh17/project-x/config"
-	"github.com/vinitparekh17/project-x/handler"
+	"github.com/vinitparekh17/project-x/utilities"
 )
 
 func Init(e *echo.Echo) {
-	pwd, _ := os.Getwd()
-	file, err := os.OpenFile(pwd+config.K.String("log_path"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	handler.ErrorHandler(err)
-	defer file.Close()
-
 	e.Use(middleware.BodyLimit("2M"))
 
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -39,5 +36,32 @@ func Init(e *echo.Echo) {
 
 	e.Use(middleware.RequestID())
 
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Output: utilities.InitErrLogs(),
+	}))
+
 	e.Use(middleware.Recover())
+
+	logger := utilities.InitApiLogs()
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:   true,
+		LogURI:      true,
+		LogError:    true,
+		HandleError: true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			if v.Error == nil {
+				logger.LogAttrs(context.Background(), slog.LevelInfo, "REQUEST",
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+				)
+			} else {
+				logger.LogAttrs(context.Background(), slog.LevelError, "REQUEST_ERROR",
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+					slog.String("err", v.Error.Error()),
+				)
+			}
+			return nil
+		},
+	}))
 }
