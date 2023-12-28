@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -34,7 +33,9 @@ func (*UserControllers) Signup(c echo.Context) error {
 	}
 
 	var existEmail string
-	database.RetriveData(db, "SELECT email FROM \"user\".identity WHERE email = $1", user.Email).Scan(&existEmail)
+	er := database.RetriveData(db, "SELECT email FROM \"user\".identity WHERE email = $1", user.Email).Scan(&existEmail)
+	handler.ErrorHandler(er)
+
 	if user.Email == existEmail {
 		return c.JSON(http.StatusBadRequest, utilities.ErrorResponse("User already exist", errors.New(utilities.SignupFailed)))
 	}
@@ -75,8 +76,8 @@ func (*UserControllers) Login(c echo.Context) error {
 		Password string
 	}
 	var eu = &existUser{}
-	database.RetriveData(db, "SELECT * FROM \"user\".identity WHERE email = $1", user.Email).Scan(&eu.Email, &eu.Password)
-	fmt.Println(eu.Email + " " + eu.Password)
+	er := database.RetriveData(db, "SELECT email, password FROM \"user\".identity WHERE email = $1", user.Email).Scan(&eu.Email, &eu.Password)
+	handler.ErrorHandler(er)
 	if user.Email == eu.Email {
 		err := bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(user.Password))
 		if err == nil {

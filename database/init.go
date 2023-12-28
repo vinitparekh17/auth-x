@@ -10,17 +10,18 @@ import (
 )
 
 func Init() {
+	pg := Connect()
+	defer Disconnect(pg)
+	er := pg.Ping()
+	handler.ErrorHandler(er)
+	if er == nil {
+		slog.Info("Database pinged successfully")
+	}
 	// path := filepath.Join("database", "user.sql")
 	// reader, err := os.ReadFile(path)
 	// handler.ErrorHandler(err)
 	// queries := string(reader)
-	pg := Connect()
-	defer Disconnect(pg)
-	err := pg.Ping()
-	handler.ErrorHandler(err)
-	if err == nil {
-		slog.Info("Database pinged successfully")
-	}
+	// pg.Exec(queries)
 }
 func Connect() *sql.DB {
 	connStr, err := config.GetEnv("POSTGRES_URL")
