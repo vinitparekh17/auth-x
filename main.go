@@ -35,7 +35,7 @@ func main() {
 	// ---------------------------------------- //
 
 	// -------------- Get Port -------------- //
-	p, e := config.GetConfig("PORT")
+	p, e := config.GetEnv("PORT")
 	handler.ErrorHandler(e)
 	// ---------------------------------------- //
 

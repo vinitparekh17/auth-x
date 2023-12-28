@@ -27,7 +27,7 @@ func LoadEnv() {
 	slog.Info("Env. loaded successfully")
 }
 
-func GetConfig(env string) (string, error) {
+func GetEnv(env string) (string, error) {
 	value := os.Getenv(env)
 	if value != "" {
 		return value, nil

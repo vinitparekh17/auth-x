@@ -17,7 +17,11 @@ type IdentityModel struct {
 	Password string `json:"password" min:"8"`
 }
 
-func (*IdentityModel) Create(usr IdentityModel) error {
+type PublicCredential struct {
+	Email string `json:"email"`
+}
+
+func (u *IdentityModel) Create() error {
 	db := database.Connect()
 	defer database.Disconnect(db)
 	query := database.Insert{
@@ -28,7 +32,7 @@ func (*IdentityModel) Create(usr IdentityModel) error {
 	smt, err := db.Prepare(query.Build())
 	handler.ErrorHandler(err)
 	defer smt.Close()
-	_, er := smt.Exec(usr.Email, usr.Password)
+	_, er := smt.Exec(u.Email, u.Password)
 	handler.ErrorHandler(er)
 	return nil
 }

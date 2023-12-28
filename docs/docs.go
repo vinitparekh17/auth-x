@@ -2,10 +2,13 @@
 package docs
 
 import (
-	"os"
-
+	
+	"embed"
 	"github.com/swaggo/swag"
 )
+
+//go:embed swagger.yaml
+var content embed.FS
 
 const docTemplate = `{{- $root := . -}}`
 
@@ -26,7 +29,7 @@ var SwaggerInfo = &swag.Spec{
 }
 
 func init() {
-	file, err := os.ReadFile("docs/swagger.yaml")
+	file, err := content.ReadFile("swagger.yaml")
 	if err != nil {
 		panic(err)
 	}
