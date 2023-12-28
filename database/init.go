@@ -3,8 +3,6 @@ package database
 import (
 	"database/sql"
 	"log/slog"
-	"os"
-	"path/filepath"
 
 	_ "github.com/lib/pq"
 	"github.com/vinitparekh17/project-x/config"
@@ -12,17 +10,21 @@ import (
 )
 
 func Init() {
-	path := filepath.Join("database", "user.sql")
-	reader, err := os.ReadFile(path)
-	handler.ErrorHandler(err)
-	queries := string(reader)
 	pg := Connect()
 	defer Disconnect(pg)
-	_, execerr := pg.Exec(queries)
-	handler.ErrorHandler(execerr)
+	er := pg.Ping()
+	handler.ErrorHandler(er)
+	if er == nil {
+		slog.Info("Database pinged successfully")
+	}
+	// path := filepath.Join("database", "user.sql")
+	// reader, err := os.ReadFile(path)
+	// handler.ErrorHandler(err)
+	// queries := string(reader)
+	// pg.Exec(queries)
 }
 func Connect() *sql.DB {
-	connStr, err := config.GetConfig("POSTGRES_URL")
+	connStr, err := config.GetEnv("POSTGRES_URL")
 	handler.ErrorHandler(err)
 	pg, err := sql.Open("postgres", connStr)
 	handler.ErrorHandler(err)

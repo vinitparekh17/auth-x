@@ -5,6 +5,8 @@ const (
 	LoginSuccess  = "User has been logged in successfully"
 	SignupFailed  = "Signup process has been failed"
 	LoginFailed   = "Login process has been failed"
+	LogoutFailed  = "Logout process has been failed"
+	EmptyFIeldErr = "Email and Password are required"
 )
 
 type errorResponse struct {

@@ -25,8 +25,7 @@ func ModifyData(query string, args ...interface{}) (bool, error) {
 	return false, errors.New("query must starts with insert, update or delete")
 }
 
-func RetriveData(db *sql.DB, query string, args ...interface{}) *sql.Rows {
-	row, err := db.Query(query, args...)
-	handler.ErrorHandler(err)
+func RetriveData(db *sql.DB, query string, args ...interface{}) *sql.Row {
+	row := db.QueryRow(query, args...)
 	return row
 }
