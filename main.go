@@ -5,9 +5,12 @@ import (
 	"github.com/vinitparekh17/project-x/apis"
 	"github.com/vinitparekh17/project-x/config"
 	"github.com/vinitparekh17/project-x/database"
-	"github.com/vinitparekh17/project-x/handler"
 	"github.com/vinitparekh17/project-x/middlewares"
+	"github.com/vinitparekh17/project-x/redis"
+	srv "github.com/vinitparekh17/project-x/server"
 )
+
+type Server echo.Echo
 
 func main() {
 	// -------------- Init Echo -------------- //
@@ -34,12 +37,11 @@ func main() {
 	apis.Init(server)
 	// ---------------------------------------- //
 
-	// -------------- Get Port -------------- //
-	p, e := config.GetEnv("PORT")
-	handler.ErrorHandler(e)
+	// -------------- Init Redis -------------- //
+	redis.Init()
 	// ---------------------------------------- //
 
-	// -------------- Start Server -------------- //
-	server.Logger.Fatal(server.Start(":" + p))
+	// -------------- Init Server -------------- //
+	srv.Init(server)
 	// ---------------------------------------- //
 }
