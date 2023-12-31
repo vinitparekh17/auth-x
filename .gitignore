@@ -1,6 +1,8 @@
 .env
 postgres-data
 
+docker-compose.yaml
+
 tests/database_test.go
 tests/env_test.go
 logs
