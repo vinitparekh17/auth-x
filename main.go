@@ -6,6 +6,7 @@ import (
 	"github.com/vinitparekh17/project-x/config"
 	"github.com/vinitparekh17/project-x/database"
 	"github.com/vinitparekh17/project-x/middlewares"
+	"github.com/vinitparekh17/project-x/redis"
 	srv "github.com/vinitparekh17/project-x/server"
 )
 
@@ -36,6 +37,11 @@ func main() {
 	apis.Init(server)
 	// ---------------------------------------- //
 
+	// -------------- Init Redis -------------- //
+	redis.Init()
 	// ---------------------------------------- //
+
+	// -------------- Init Server -------------- //
 	srv.Init(server)
+	// ---------------------------------------- //
 }
