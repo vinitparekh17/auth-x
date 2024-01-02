@@ -13,5 +13,6 @@ type HealthController struct{}
 func (*HealthController) GetHealth(c echo.Context) error {
 	hostname, err := os.Hostname()
 	handler.ErrorHandler(err)
+	// sending a message to health route.
 	return c.JSON(http.StatusOK, hostname+" is healthy")
 }
