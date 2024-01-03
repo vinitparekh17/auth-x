@@ -10,8 +10,6 @@ import (
 	srv "github.com/vinitparekh17/project-x/server"
 )
 
-type Server echo.Echo
-
 func main() {
 	// -------------- Init Echo -------------- //
 	server := echo.New()

@@ -3,3 +3,5 @@ origin:
   - http://localhost:8000
 api_logs: /logs/api.log
 err_logs: /logs/error.log
+
+notification_url: http://localhost:8080/api/v1
